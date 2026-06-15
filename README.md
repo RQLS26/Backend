@@ -6,7 +6,7 @@ Buildline Platform API is the Sprint 3 Web Services implementation for the Build
 
 - `Iam`: authentication, JWT token issuing, users management and identity ACL.
 - `Profiles`: company profile lookup/update and profile ACL.
-- `Catalog`: reference data for projects, materials and categories used by requisition, procurement, inventory and analytics workflows.
+- `Requisition` owns material reference data used by field material requests.\r\n- `Inventory` owns category reference data used by stock filters and material classification.\r\n- `Analytics` owns project reference data used by budget and dashboard views.
 - `Requisition`: field material requests, priority, approval status and requested delivery date.
 - `Procurement`: purchase orders, quotations and approval-status transitions.
 - `Inventory`: project stock, minimum/maximum thresholds and stock update dates.
@@ -26,9 +26,9 @@ The API currently covers the Sprint 2 Vue frontend mock resources with versioned
 | --- | --- | --- |
 | `users` | `/api/v1/users` | IAM |
 | `profiles` | `/api/v1/profiles` | Profiles |
-| `projects` | `/api/v1/projects` | Catalog reference data |
-| `materials` | `/api/v1/materials` | Catalog reference data |
-| `categories` | `/api/v1/categories` | Catalog reference data |
+| `projects` | `/api/v1/projects` | Analytics reference data |
+| `materials` | `/api/v1/materials` | Requisition reference data |
+| `categories` | `/api/v1/categories` | Inventory reference data |
 | `requisitions` | `/api/v1/requisitions` | Requisition |
 | `purchaseOrders` | `/api/v1/purchaseOrders` | Procurement |
 | `quotations` | `/api/v1/quotations` | Procurement |
@@ -76,4 +76,5 @@ Health check:
 ```http
 GET http://localhost:8080/api/v1/health
 ```
+
 
