@@ -1,3 +1,4 @@
+using Buildline.Platform.Materials.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using Buildline.Platform.Profiles.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using Buildline.Platform.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using Buildline.Platform.Shared.Infrastructure.Persistence.EntityFrameworkCore.Interceptors;
@@ -36,6 +37,9 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
 
         // Profiles Context
         builder.ApplyProfilesConfiguration();
+
+        // Materials Context
+        builder.ApplyMaterialsConfiguration();
 
         // General Naming Convention for the database objects
         builder.UseSnakeCaseNamingConvention();
