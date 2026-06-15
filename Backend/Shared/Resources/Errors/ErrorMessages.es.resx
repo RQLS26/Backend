@@ -46,4 +46,19 @@
     <data name="ProfilesError.InternalServerError" xml:space="preserve">
     <value>Ocurrió un error interno inesperado en Perfiles.</value>
   </data>
+    <data name="MaterialsError.MaterialNotFound" xml:space="preserve">
+    <value>Material no encontrado.</value>
+  </data>
+    <data name="MaterialsError.InvalidMaterialData" xml:space="preserve">
+    <value>Datos de material inválidos proporcionados.</value>
+  </data>
+    <data name="MaterialsError.OperationCancelled" xml:space="preserve">
+    <value>La operación de material fue cancelada.</value>
+  </data>
+    <data name="MaterialsError.DatabaseError" xml:space="preserve">
+    <value>Ocurrió un error de base de datos durante la operación de material.</value>
+  </data>
+    <data name="MaterialsError.InternalServerError" xml:space="preserve">
+    <value>Ocurrió un error interno inesperado en Materiales.</value>
+  </data>
 </root>

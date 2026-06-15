@@ -1,3 +1,7 @@
+using Buildline.Platform.Materials.Application.Internal.QueryServices;
+using Buildline.Platform.Materials.Application.QueryServices;
+using Buildline.Platform.Materials.Domain.Repositories;
+using Buildline.Platform.Materials.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using Buildline.Platform.Profiles.Application.CommandServices;
 using Buildline.Platform.Profiles.Application.Internal.CommandServices;
 using Buildline.Platform.Profiles.Application.Internal.QueryServices;
@@ -70,6 +74,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
+builder.Services.AddScoped<IMaterialQueryService, MaterialQueryService>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 builder.Services.AddScoped<IProfileCommandService, ProfileCommandService>();
 builder.Services.AddScoped<IProfileQueryService, ProfileQueryService>();
