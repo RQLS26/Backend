@@ -302,3 +302,17 @@ Acceptance criteria:
 - Given a valid delivery state transition, when PATCH is executed, then the API returns the updated delivery.
 - Given a non-existent delivery id, when PATCH is called, then the API returns 404 Not Found.
 
+---
+
+### TS-SUP-001 - Suppliers directory API
+
+**Branch:** $(System.Collections.Hashtable.Branch)  
+**Context / module:** suppliers  
+**Endpoint(s):** $(System.Collections.Hashtable.Endpoints)
+
+As a frontend developer, I want to maintain the supplier directory used by procurement and incidents.
+
+Acceptance criteria:
+- Given a valid supplier payload, when POST is executed, then the API returns the created supplier.
+- Given suppliers exist, when GET is called, then the API returns rating, category and delivery performance data.
+
