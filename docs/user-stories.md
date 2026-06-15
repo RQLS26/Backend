@@ -22,3 +22,17 @@ Acceptance criteria:
 - Given the API is running, when GET /api/v1/health is requested, then the service responds 200 OK.
 - Given Swagger is opened, when the API document is generated, then XML summaries, parameters, response metadata and bearer authentication are visible.
 
+---
+
+### IMP-BE-002 - Persistence, migrations and seed data
+
+**Branch:** $(System.Collections.Hashtable.Branch)  
+**Context / module:** shared persistence  
+**Endpoint(s):** $(System.Collections.Hashtable.Endpoints)
+
+As a frontend developer, I want to configure transactional persistence, audit metadata, constraints and initial data compatible with the frontend mock contracts.
+
+Acceptance criteria:
+- Given the database is empty, when migrations are applied, then operational tables for the prioritized contexts are created.
+- Given the frontend replaces json-server, when reference endpoints are queried, then initial data is available for smoke testing.
+
