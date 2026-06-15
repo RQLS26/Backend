@@ -274,3 +274,17 @@ Acceptance criteria:
 - Given a valid stock update, when PATCH is executed, then the API updates stock and last updated date.
 - Given an invalid inventory id, when PATCH is called, then the API returns 404 Not Found.
 
+---
+
+### TS-DEL-001 - Delivery tracking list and create API
+
+**Branch:** $(System.Collections.Hashtable.Branch)  
+**Context / module:** delivery  
+**Endpoint(s):** $(System.Collections.Hashtable.Endpoints)
+
+As a frontend developer, I want to register and track deliveries linked to purchase orders.
+
+Acceptance criteria:
+- Given purchase order, supplier, origin, destination and ETA, when POST is executed, then the API creates a delivery with tracking id.
+- Given deliveries exist, when GET is called, then the API returns tracking information for field and logistics users.
+
