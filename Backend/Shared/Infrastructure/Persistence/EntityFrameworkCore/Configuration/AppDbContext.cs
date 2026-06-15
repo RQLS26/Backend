@@ -1,3 +1,4 @@
+using Buildline.Platform.Categories.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using Buildline.Platform.Materials.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using Buildline.Platform.Profiles.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using Buildline.Platform.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
@@ -40,6 +41,9 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
 
         // Materials Context
         builder.ApplyMaterialsConfiguration();
+
+        // Categories Context
+        builder.ApplyCategoriesConfiguration();
 
         // General Naming Convention for the database objects
         builder.UseSnakeCaseNamingConvention();

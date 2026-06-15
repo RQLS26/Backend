@@ -1,3 +1,7 @@
+using Buildline.Platform.Categories.Application.Internal.QueryServices;
+using Buildline.Platform.Categories.Application.QueryServices;
+using Buildline.Platform.Categories.Domain.Repositories;
+using Buildline.Platform.Categories.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using Buildline.Platform.Materials.Application.CommandServices;
 using Buildline.Platform.Materials.Application.Internal.CommandServices;
 using Buildline.Platform.Materials.Application.Internal.QueryServices;
@@ -76,6 +80,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryQueryService, CategoryQueryService>();
 builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
 builder.Services.AddScoped<IMaterialCommandService, MaterialCommandService>();
 builder.Services.AddScoped<IMaterialQueryService, MaterialQueryService>();

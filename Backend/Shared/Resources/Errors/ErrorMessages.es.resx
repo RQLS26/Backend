@@ -61,4 +61,19 @@
     <data name="MaterialsError.InternalServerError" xml:space="preserve">
     <value>Ocurrió un error interno inesperado en Materiales.</value>
   </data>
+    <data name="CategoriesError.CategoryNotFound" xml:space="preserve">
+    <value>Categoría no encontrada.</value>
+  </data>
+    <data name="CategoriesError.InvalidCategoryData" xml:space="preserve">
+    <value>Datos de categoría inválidos proporcionados.</value>
+  </data>
+    <data name="CategoriesError.OperationCancelled" xml:space="preserve">
+    <value>La operación de categoría fue cancelada.</value>
+  </data>
+    <data name="CategoriesError.DatabaseError" xml:space="preserve">
+    <value>Ocurrió un error de base de datos durante la operación de categoría.</value>
+  </data>
+    <data name="CategoriesError.InternalServerError" xml:space="preserve">
+    <value>Ocurrió un error interno inesperado en Categorías.</value>
+  </data>
 </root>
