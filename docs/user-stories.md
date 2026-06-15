@@ -358,3 +358,17 @@ Acceptance criteria:
 - Given an existing incident and valid changes, when PATCH is executed, then the API returns the updated incident.
 - Given an invalid id, when PATCH is called, then the API returns 404 Not Found.
 
+---
+
+### TS-ANB-001 - Budget dashboard API
+
+**Branch:** $(System.Collections.Hashtable.Branch)  
+**Context / module:** analytics-budgeting  
+**Endpoint(s):** $(System.Collections.Hashtable.Endpoints)
+
+As a frontend developer, I want to feed analytics-budgeting dashboards with budget and spending indicators.
+
+Acceptance criteria:
+- Given project budgets exist, when GET is called, then the API returns totalBudget, spent, allocated and status.
+- Given a valid budget payload, when POST is executed, then the API creates the budget record for dashboard consumption.
+
