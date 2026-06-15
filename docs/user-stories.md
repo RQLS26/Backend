@@ -176,3 +176,17 @@ Acceptance criteria:
 - Given requisitions exist, when the list endpoint is called, then the API returns status, priority, requester and project data.
 - Given a non-existent id, when the detail endpoint is called, then the API returns 404 Not Found.
 
+---
+
+### TS-REQ-003 - Update requisition API
+
+**Branch:** $(System.Collections.Hashtable.Branch)  
+**Context / module:** requisition  
+**Endpoint(s):** $(System.Collections.Hashtable.Endpoints)
+
+As a frontend developer, I want to reflect status, priority and operational updates for material requests.
+
+Acceptance criteria:
+- Given an existing requisition and valid changes, when PATCH is executed, then the API returns the updated resource.
+- Given an invalid id, when PATCH is executed, then the API returns 404 Not Found.
+
