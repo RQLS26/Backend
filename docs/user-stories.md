@@ -190,3 +190,17 @@ Acceptance criteria:
 - Given an existing requisition and valid changes, when PATCH is executed, then the API returns the updated resource.
 - Given an invalid id, when PATCH is executed, then the API returns 404 Not Found.
 
+---
+
+### TS-PROC-001 - Quotations list and create API
+
+**Branch:** $(System.Collections.Hashtable.Branch)  
+**Context / module:** procurement  
+**Endpoint(s):** $(System.Collections.Hashtable.Endpoints)
+
+As a frontend developer, I want to register and compare supplier quotations.
+
+Acceptance criteria:
+- Given a valid quotation payload, when POST is executed, then the API returns 201 Created.
+- Given quotations exist, when GET is called, then the API returns comparable supplier offer data.
+
