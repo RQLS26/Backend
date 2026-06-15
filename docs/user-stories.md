@@ -78,3 +78,17 @@ Acceptance criteria:
 - Given users exist, when GET /api/v1/users is called, then the API returns a user collection.
 - Given a valid user payload, when POST /api/v1/users is called, then the API persists and returns the created resource.
 
+---
+
+### TS-IAM-004 - User detail and update API
+
+**Branch:** $(System.Collections.Hashtable.Branch)  
+**Context / module:** iam  
+**Endpoint(s):** $(System.Collections.Hashtable.Endpoints)
+
+As a frontend developer, I want to show user details and update editable role or status information.
+
+Acceptance criteria:
+- Given an existing user id, when the detail endpoint is called, then the API returns 200 OK with the user resource.
+- Given valid changes, when PATCH is executed, then the API persists the update and returns the modified user.
+
