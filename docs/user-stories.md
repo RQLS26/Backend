@@ -372,3 +372,17 @@ Acceptance criteria:
 - Given project budgets exist, when GET is called, then the API returns totalBudget, spent, allocated and status.
 - Given a valid budget payload, when POST is executed, then the API creates the budget record for dashboard consumption.
 
+---
+
+### TS-ANB-002 - Budget update API
+
+**Branch:** $(System.Collections.Hashtable.Branch)  
+**Context / module:** analytics-budgeting  
+**Endpoint(s):** $(System.Collections.Hashtable.Endpoints)
+
+As a frontend developer, I want to update financial values used to calculate budget deviation states.
+
+Acceptance criteria:
+- Given valid spent or allocated changes, when PATCH is executed, then the API returns the updated budget.
+- Given a non-existent budget id, when PATCH is called, then the API returns 404 Not Found.
+
