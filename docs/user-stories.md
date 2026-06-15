@@ -36,3 +36,17 @@ Acceptance criteria:
 - Given the database is empty, when migrations are applied, then operational tables for the prioritized contexts are created.
 - Given the frontend replaces json-server, when reference endpoints are queried, then initial data is available for smoke testing.
 
+---
+
+### TS-IAM-001 - Sign-in API
+
+**Branch:** $(System.Collections.Hashtable.Branch)  
+**Context / module:** iam  
+**Endpoint(s):** $(System.Collections.Hashtable.Endpoints)
+
+As a frontend developer, I want to authenticate users, obtain a JWT token and initialize the client session.
+
+Acceptance criteria:
+- Given valid credentials, when the sign-in endpoint is called, then the API returns 200 OK with user data and token.
+- Given invalid credentials, when the endpoint is called, then the API returns a controlled error without issuing a token.
+
