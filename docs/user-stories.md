@@ -414,3 +414,17 @@ Acceptance criteria:
 - Given an existing message, when PATCH is executed, then the API updates read or starred state.
 - Given an existing message, when DELETE is executed, then the message no longer appears in the inbox.
 
+---
+
+### IMP-BE-003 - Deployment and integration readiness
+
+**Branch:** $(System.Collections.Hashtable.Branch)  
+**Context / module:** deployment  
+**Endpoint(s):** $(System.Collections.Hashtable.Endpoints)
+
+As a frontend developer, I want to prepare the Web Services for deployment and frontend integration smoke testing.
+
+Acceptance criteria:
+- Given production variables are provided, when the API is built or containerized, then it starts with production-safe configuration.
+- Given the frontend replaces json-server, when smoke requests are executed, then the prioritized endpoints respond with the documented contracts.
+
