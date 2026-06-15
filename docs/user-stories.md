@@ -6,7 +6,7 @@ Common conventions:
 - Base path: `/api/v1`.
 - API implementation: ASP.NET Core / C#.
 - Frontend contexts: `iam`, `profiles`, `shared`, `requisition`, `procurement`, `inventory`, `delivery`, `suppliers`, `analytics-budgeting` and `communication`.
-- `Projects`, `Materials` and `Categories` are documented as reference catalog modules, not as independent frontend bounded contexts and not as part of the technical `Shared` kernel.
+- `Materials`, `Categories` and `Projects` are implemented as reference data inside existing frontend-aligned bounded contexts: `requisition`, `inventory` and `analytics-budgeting` respectively; they are not independent bounded contexts and are not part of the technical `Shared` kernel.
 
 ---
 
@@ -427,3 +427,4 @@ As a frontend developer, I want to prepare the Web Services for deployment and f
 Acceptance criteria:
 - Given production variables are provided, when the API is built or containerized, then it starts with production-safe configuration.
 - Given the frontend replaces json-server, when smoke requests are executed, then the prioritized endpoints respond with the documented contracts.
+

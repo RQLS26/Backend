@@ -1,14 +1,11 @@
 using Buildline.Platform.Analytics.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
-using Buildline.Platform.Categories.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
+using Buildline.Platform.Inventory.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using Buildline.Platform.Communication.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using Buildline.Platform.Delivery.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using Buildline.Platform.Iam.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
-using Buildline.Platform.Inventory.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
-using Buildline.Platform.Materials.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
+using Buildline.Platform.Requisition.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using Buildline.Platform.Procurement.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using Buildline.Platform.Profiles.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
-using Buildline.Platform.Projects.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
-using Buildline.Platform.Requisition.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using Buildline.Platform.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using Buildline.Platform.Shared.Infrastructure.Persistence.EntityFrameworkCore.Interceptors;
 using Buildline.Platform.Suppliers.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
@@ -85,3 +82,4 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.UseSnakeCaseNamingConvention();
     }
 }
+
