@@ -61,4 +61,24 @@ public partial class Material : IAuditableEntity
     public int MaxStock { get; private set; }
     public DateTimeOffset? CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
+
+    public void UpdateCatalogInformation(
+        string sku,
+        string name,
+        string category,
+        string unit,
+        string project,
+        int currentStock,
+        int minStock,
+        int maxStock)
+    {
+        Sku = sku;
+        Name = name;
+        Category = category;
+        Unit = unit;
+        Project = project;
+        CurrentStock = currentStock;
+        MinStock = minStock;
+        MaxStock = maxStock;
+    }
 }

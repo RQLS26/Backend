@@ -83,4 +83,41 @@ public class MaterialsController(
                 new { materialId = createdMaterial.Id },
                 MaterialResourceFromEntityAssembler.ToResourceFromEntity(createdMaterial)));
     }
+
+    [HttpPut("{materialId:int}")]
+    [SwaggerOperation(
+        Summary = "Update material by id",
+        Description = "Updates a material from the Buildline catalog by its unique identifier.",
+        OperationId = "UpdateMaterialById")]
+    [SwaggerResponse(StatusCodes.Status200OK, "The material was updated.", typeof(MaterialResource))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "The material was not found.")]
+    public async Task<IActionResult> UpdateMaterialById(
+        int materialId,
+        [FromBody] UpdateMaterialResource resource,
+        CancellationToken cancellationToken)
+    {
+        var command = UpdateMaterialCommandFromResourceAssembler.ToCommandFromResource(materialId, resource);
+        var result = await materialCommandService.Handle(command, cancellationToken);
+
+        return MaterialsActionResultAssembler.ToActionResultFromUpdateMaterialResult(
+            this,
+            result,
+            problemDetailsFactory,
+            updatedMaterial => Ok(MaterialResourceFromEntityAssembler.ToResourceFromEntity(updatedMaterial)));
+    }
+
+    [HttpPatch("{materialId:int}")]
+    [SwaggerOperation(
+        Summary = "Patch material by id",
+        Description = "Partially-compatible update endpoint for the current inventory and material catalog frontend.",
+        OperationId = "PatchMaterialById")]
+    [SwaggerResponse(StatusCodes.Status200OK, "The material was updated.", typeof(MaterialResource))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "The material was not found.")]
+    public async Task<IActionResult> PatchMaterialById(
+        int materialId,
+        [FromBody] UpdateMaterialResource resource,
+        CancellationToken cancellationToken)
+    {
+        return await UpdateMaterialById(materialId, resource, cancellationToken);
+    }
 }
