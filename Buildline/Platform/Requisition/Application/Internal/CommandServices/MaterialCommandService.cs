@@ -129,15 +129,15 @@ public class MaterialCommandService(
     /// <summary>
     ///     Handles removal of an existing material from material references.
     /// </summary>
-    /// <param name="command">Delete command containing the material id.</param>
+    /// <param name="materialId">Identifier of the material aggregate that must be removed.</param>
     /// <param name="cancellationToken">Token used to cancel lookup and persistence.</param>
     /// <returns>
     ///     A successful empty result when the material is removed, or a material-domain error when the
     ///     material does not exist or persistence fails.
     /// </returns>
-    public async Task<Result> Handle(DeleteMaterialCommand command, CancellationToken cancellationToken = default)
+    public async Task<Result> HandleDelete(int materialId, CancellationToken cancellationToken = default)
     {
-        var material = await materialRepository.FindByIdAsync(command.MaterialId, cancellationToken);
+        var material = await materialRepository.FindByIdAsync(materialId, cancellationToken);
         if (material is null)
             return Result.Failure(
                 MaterialsError.MaterialNotFound,

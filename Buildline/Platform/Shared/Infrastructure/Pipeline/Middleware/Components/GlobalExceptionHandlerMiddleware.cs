@@ -51,18 +51,18 @@ public class GlobalExceptionHandlerMiddleware(
     }
 
     /// <summary>
-    ///     Writes a localized conflict response for cancelled operations.
+    ///     Writes a localized client-closed-request response for cancelled operations.
     /// </summary>
     /// <param name="context">HTTP context that will receive the Problem Details payload.</param>
     /// <returns>A task that completes when the response body has been written.</returns>
     private async Task HandleOperationCanceledExceptionAsync(HttpContext context)
     {
         context.Response.ContentType = MediaTypeNames.Application.Json;
-        context.Response.StatusCode = StatusCodes.Status409Conflict;
+        context.Response.StatusCode = 499;
 
         var problemDetails = new ProblemDetails
         {
-            Status = StatusCodes.Status409Conflict,
+            Status = 499,
             Title = errorLocalizer["OperationCancelled"],
             Detail = errorLocalizer["OperationCancelled"],
             Instance = context.Request.Path

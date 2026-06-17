@@ -1,7 +1,6 @@
 using System.Net.Mime;
 using Buildline.Platform.Requisition.Application.CommandServices;
 using Buildline.Platform.Requisition.Application.QueryServices;
-using Buildline.Platform.Requisition.Domain.Model.Commands;
 using Buildline.Platform.Requisition.Interfaces.Rest.Resources;
 using Buildline.Platform.Requisition.Interfaces.Rest.Transform;
 using Buildline.Platform.Shared.Interfaces.Rest.ProblemDetails;
@@ -173,8 +172,7 @@ public class MaterialsController(
     [SwaggerResponse(StatusCodes.Status404NotFound, "The material was not found.")]
     public async Task<IActionResult> DeleteMaterialById(int materialId, CancellationToken cancellationToken)
     {
-        var command = new DeleteMaterialCommand(materialId);
-        var result = await materialCommandService.Handle(command, cancellationToken);
+        var result = await materialCommandService.HandleDelete(materialId, cancellationToken);
         return ApplicationResultActionResultAssembler.ToActionResult(this, result, problemDetailsFactory, NoContent);
     }
 }

@@ -32,10 +32,10 @@ public interface IMaterialCommandService
     /// <summary>
     ///     Handles material deletion.
     /// </summary>
-    /// <param name="command">Command containing the material id that must be removed.</param>
+    /// <param name="materialId">Identifier of the material aggregate that must be removed.</param>
     /// <param name="cancellationToken">Token used to cancel lookup and persistence operations.</param>
     /// <returns>A result that indicates success or a material-domain error.</returns>
-    Task<Result> Handle(DeleteMaterialCommand command, CancellationToken cancellationToken = default);
+    Task<Result> HandleDelete(int materialId, CancellationToken cancellationToken = default);
 }
 
 

@@ -72,7 +72,7 @@ public static class ApplicationResultActionResultAssembler
             { } name when name.EndsWith("Invalid", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status400BadRequest,
             { } name when name.EndsWith("AlreadyTaken", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status409Conflict,
             { } name when name.EndsWith("AlreadyExists", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status409Conflict,
-            { } name when name.EndsWith("Cancelled", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status409Conflict,
+            { } name when name.EndsWith("Cancelled", StringComparison.OrdinalIgnoreCase) => 499,
             { } name when name.EndsWith("DatabaseError", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status500InternalServerError,
             { } name when name.EndsWith("InternalServerError", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status500InternalServerError,
             { } name when name.EndsWith("Unauthorized", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status401Unauthorized,
