@@ -1,14 +1,12 @@
 using System.Net.Mime;
 using Buildline.Platform.Iam.Application.CommandServices;
 using Buildline.Platform.Iam.Application.QueryServices;
-using Buildline.Platform.Iam.Domain.Model.Queries;
 using Buildline.Platform.Iam.Interfaces.Rest.Resources;
 using Buildline.Platform.Iam.Interfaces.Rest.Transform;
-using Buildline.Platform.Resources.Errors;
 using Buildline.Platform.Shared.Interfaces.Rest.ProblemDetails;
+using Buildline.Platform.Shared.Interfaces.Rest.Transform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Buildline.Platform.Iam.Interfaces.Rest;
@@ -30,7 +28,6 @@ namespace Buildline.Platform.Iam.Interfaces.Rest;
 public class UsersController(
     IUserCommandService userCommandService,
     IUserQueryService userQueryService,
-    IStringLocalizer<ErrorMessages> errorLocalizer,
     ProblemDetailsFactory problemDetailsFactory)
     : ControllerBase
 {
@@ -50,12 +47,8 @@ public class UsersController(
     [SwaggerResponse(StatusCodes.Status204NoContent, "No users are currently registered.")]
     public async Task<IActionResult> GetAllUsers(CancellationToken cancellationToken)
     {
-        var query = new GetAllUsersQuery();
-        var users = await userQueryService.Handle(query, cancellationToken);
-
-        return UsersActionResultAssembler.ToActionResultFromGetAllUsersResult(
-            users,
-            foundUsers => Ok(foundUsers.Select(UserResourceFromEntityAssembler.ToResourceFromEntity)));
+        var users = await userQueryService.ListAsync(cancellationToken);
+        return Ok(users.Select(UserResourceFromEntityAssembler.ToResourceFromEntity));
     }
 
     /// <summary>
@@ -75,15 +68,10 @@ public class UsersController(
     [SwaggerResponse(StatusCodes.Status404NotFound, "The user was not found.")]
     public async Task<IActionResult> GetUserById(int userId, CancellationToken cancellationToken)
     {
-        var query = new GetUserByIdQuery(userId);
-        var user = await userQueryService.Handle(query, cancellationToken);
-
-        return UsersActionResultAssembler.ToActionResultFromGetUserByIdResult(
-            this,
-            user,
-            errorLocalizer,
-            problemDetailsFactory,
-            foundUser => Ok(UserResourceFromEntityAssembler.ToResourceFromEntity(foundUser)));
+        var user = await userQueryService.FindByIdAsync(userId, cancellationToken);
+        return user is null
+            ? this.NotFoundProblem("User", userId)
+            : Ok(UserResourceFromEntityAssembler.ToResourceFromEntity(user));
     }
 
     /// <summary>
@@ -110,11 +98,7 @@ public class UsersController(
     {
         var command = CreateUserCommandFromResourceAssembler.ToCommandFromResource(resource);
         var result = await userCommandService.Handle(command, cancellationToken);
-
-        return UsersActionResultAssembler.ToActionResultFromCreateUserResult(
-            this,
-            result,
-            problemDetailsFactory,
+        return ApplicationResultActionResultAssembler.ToActionResult(this, result, problemDetailsFactory,
             createdUser => CreatedAtAction(
                 nameof(GetUserById),
                 new { userId = createdUser.Id },
@@ -147,23 +131,13 @@ public class UsersController(
         [FromBody] UpdateUserResource resource,
         CancellationToken cancellationToken)
     {
-        var currentUser = await userQueryService.Handle(new GetUserByIdQuery(userId), cancellationToken);
-        var getCurrentUserResult = UsersActionResultAssembler.ToActionResultFromGetUserByIdResult(
-            this,
-            currentUser,
-            errorLocalizer,
-            problemDetailsFactory,
-            foundUser => Ok(foundUser));
-
-        if (currentUser is null) return getCurrentUserResult;
+        var currentUser = await userQueryService.FindByIdAsync(userId, cancellationToken);
+        if (currentUser is null)
+            return this.NotFoundProblem("User", userId);
 
         var command = UpdateUserCommandFromResourceAssembler.ToCommandFromResource(userId, currentUser, resource);
         var result = await userCommandService.Handle(command, cancellationToken);
-
-        return UsersActionResultAssembler.ToActionResultFromUpdateUserResult(
-            this,
-            result,
-            problemDetailsFactory,
+        return ApplicationResultActionResultAssembler.ToActionResult(this, result, problemDetailsFactory,
             updatedUser => Ok(UserResourceFromEntityAssembler.ToResourceFromEntity(updatedUser)));
     }
 }

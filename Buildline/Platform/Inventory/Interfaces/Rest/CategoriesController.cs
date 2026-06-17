@@ -1,13 +1,10 @@
 using System.Net.Mime;
 using Buildline.Platform.Inventory.Application.QueryServices;
-using Buildline.Platform.Inventory.Domain.Model.Queries;
 using Buildline.Platform.Inventory.Interfaces.Rest.Resources;
 using Buildline.Platform.Inventory.Interfaces.Rest.Transform;
-using Buildline.Platform.Resources.Errors;
 using Buildline.Platform.Shared.Interfaces.Rest.ProblemDetails;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Buildline.Platform.Inventory.Interfaces.Rest;
@@ -25,9 +22,7 @@ namespace Buildline.Platform.Inventory.Interfaces.Rest;
 [Produces(MediaTypeNames.Application.Json)]
 [SwaggerTag("Available Material Category endpoints.")]
 public class CategoriesController(
-    ICategoryQueryService categoryQueryService,
-    IStringLocalizer<ErrorMessages> errorLocalizer,
-    ProblemDetailsFactory problemDetailsFactory)
+    ICategoryQueryService categoryQueryService)
     : ControllerBase
 {
     /// <summary>
@@ -46,12 +41,8 @@ public class CategoriesController(
     [SwaggerResponse(StatusCodes.Status204NoContent, "No categories are currently registered.")]
     public async Task<IActionResult> GetAllCategories(CancellationToken cancellationToken)
     {
-        var query = new GetAllCategoriesQuery();
-        var categories = await categoryQueryService.Handle(query, cancellationToken);
-
-        return CategoriesActionResultAssembler.ToActionResultFromGetAllCategoriesResult(
-            categories,
-            foundCategories => Ok(foundCategories.Select(CategoryResourceFromEntityAssembler.ToResourceFromEntity)));
+        var categories = await categoryQueryService.ListAsync(cancellationToken);
+        return Ok(categories.Select(CategoryResourceFromEntityAssembler.ToResourceFromEntity));
     }
 
     /// <summary>
@@ -71,15 +62,10 @@ public class CategoriesController(
     [SwaggerResponse(StatusCodes.Status404NotFound, "The category was not found.")]
     public async Task<IActionResult> GetCategoryById(int categoryId, CancellationToken cancellationToken)
     {
-        var query = new GetCategoryByIdQuery(categoryId);
-        var category = await categoryQueryService.Handle(query, cancellationToken);
-
-        return CategoriesActionResultAssembler.ToActionResultFromGetCategoryByIdResult(
-            this,
-            category,
-            errorLocalizer,
-            problemDetailsFactory,
-            foundCategory => Ok(CategoryResourceFromEntityAssembler.ToResourceFromEntity(foundCategory)));
+        var category = await categoryQueryService.FindByIdAsync(categoryId, cancellationToken);
+        return category is null
+            ? this.NotFoundProblem("Category", categoryId)
+            : Ok(CategoryResourceFromEntityAssembler.ToResourceFromEntity(category));
     }
 }
 

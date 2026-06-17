@@ -1,5 +1,4 @@
 using Buildline.Platform.Analytics.Domain.Model.Aggregates;
-using Buildline.Platform.Analytics.Domain.Model.Queries;
 
 namespace Buildline.Platform.Analytics.Application.QueryServices;
 
@@ -13,19 +12,18 @@ namespace Buildline.Platform.Analytics.Application.QueryServices;
 public interface IProjectQueryService
 {
     /// <summary>
-    ///     Handles the query that retrieves every construction project reference.
+    ///     Lists every construction project reference.
     /// </summary>
-    /// <param name="query">Query object representing the project listing request.</param>
     /// <param name="cancellationToken">Token used to cancel repository access.</param>
     /// <returns>The projects available to frontend filters and dashboard views.</returns>
-    Task<IEnumerable<Project>> Handle(GetAllProjectsQuery query, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Project>> ListAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Handles the query that retrieves one construction project by identifier.
+    ///     Finds one construction project by identifier.
     /// </summary>
-    /// <param name="query">Query object containing the requested project id.</param>
+    /// <param name="projectId">The identifier of the project to look up.</param>
     /// <param name="cancellationToken">Token used to cancel repository access.</param>
     /// <returns>The project when it exists; otherwise <c>null</c>.</returns>
-    Task<Project?> Handle(GetProjectByIdQuery query, CancellationToken cancellationToken = default);
+    Task<Project?> FindByIdAsync(int projectId, CancellationToken cancellationToken = default);
 }
 

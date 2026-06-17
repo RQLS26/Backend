@@ -1,13 +1,10 @@
 using System.Net.Mime;
 using Buildline.Platform.Analytics.Application.QueryServices;
-using Buildline.Platform.Analytics.Domain.Model.Queries;
 using Buildline.Platform.Analytics.Interfaces.Rest.Resources;
 using Buildline.Platform.Analytics.Interfaces.Rest.Transform;
-using Buildline.Platform.Resources.Errors;
 using Buildline.Platform.Shared.Interfaces.Rest.ProblemDetails;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Buildline.Platform.Analytics.Interfaces.Rest;
@@ -25,9 +22,7 @@ namespace Buildline.Platform.Analytics.Interfaces.Rest;
 [Produces(MediaTypeNames.Application.Json)]
 [SwaggerTag("Available Project reference endpoints.")]
 public class ProjectsController(
-    IProjectQueryService projectQueryService,
-    IStringLocalizer<ErrorMessages> errorLocalizer,
-    ProblemDetailsFactory problemDetailsFactory)
+    IProjectQueryService projectQueryService)
     : ControllerBase
 {
     /// <summary>
@@ -46,12 +41,8 @@ public class ProjectsController(
     [SwaggerResponse(StatusCodes.Status204NoContent, "No projects are currently registered.")]
     public async Task<IActionResult> GetAllProjects(CancellationToken cancellationToken)
     {
-        var query = new GetAllProjectsQuery();
-        var projects = await projectQueryService.Handle(query, cancellationToken);
-
-        return ProjectsActionResultAssembler.ToActionResultFromGetAllProjectsResult(
-            projects,
-            foundProjects => Ok(foundProjects.Select(ProjectResourceFromEntityAssembler.ToResourceFromEntity)));
+        var projects = await projectQueryService.ListAsync(cancellationToken);
+        return Ok(projects.Select(ProjectResourceFromEntityAssembler.ToResourceFromEntity));
     }
 
     /// <summary>
@@ -71,15 +62,10 @@ public class ProjectsController(
     [SwaggerResponse(StatusCodes.Status404NotFound, "The project was not found.")]
     public async Task<IActionResult> GetProjectById(int projectId, CancellationToken cancellationToken)
     {
-        var query = new GetProjectByIdQuery(projectId);
-        var project = await projectQueryService.Handle(query, cancellationToken);
-
-        return ProjectsActionResultAssembler.ToActionResultFromGetProjectByIdResult(
-            this,
-            project,
-            errorLocalizer,
-            problemDetailsFactory,
-            foundProject => Ok(ProjectResourceFromEntityAssembler.ToResourceFromEntity(foundProject)));
+        var project = await projectQueryService.FindByIdAsync(projectId, cancellationToken);
+        return project is null
+            ? this.NotFoundProblem("Project", projectId)
+            : Ok(ProjectResourceFromEntityAssembler.ToResourceFromEntity(project));
     }
 }
 

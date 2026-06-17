@@ -1,5 +1,4 @@
 using Buildline.Platform.Iam.Application.QueryServices;
-using Buildline.Platform.Iam.Domain.Model.Queries;
 using Buildline.Platform.Iam.Interfaces.Acl;
 
 namespace Buildline.Platform.Iam.Application.Acl;
@@ -18,28 +17,28 @@ public class IamContextFacade(IUserQueryService userQueryService) : IIamContextF
     /// <inheritdoc />
     public async Task<int> FetchUserIdByEmail(string email, CancellationToken cancellationToken = default)
     {
-        var user = await userQueryService.Handle(new GetUserByEmailQuery(email), cancellationToken);
+        var user = await userQueryService.FindByEmailAsync(email, cancellationToken);
         return user?.Id ?? 0;
     }
 
     /// <inheritdoc />
     public async Task<string> FetchUserEmailById(int userId, CancellationToken cancellationToken = default)
     {
-        var user = await userQueryService.Handle(new GetUserByIdQuery(userId), cancellationToken);
+        var user = await userQueryService.FindByIdAsync(userId, cancellationToken);
         return user?.Email ?? string.Empty;
     }
 
     /// <inheritdoc />
     public async Task<string> FetchUserRoleById(int userId, CancellationToken cancellationToken = default)
     {
-        var user = await userQueryService.Handle(new GetUserByIdQuery(userId), cancellationToken);
+        var user = await userQueryService.FindByIdAsync(userId, cancellationToken);
         return user?.Role ?? string.Empty;
     }
 
     /// <inheritdoc />
     public async Task<bool> ExistsUserByEmail(string email, CancellationToken cancellationToken = default)
     {
-        var user = await userQueryService.Handle(new GetUserByEmailQuery(email), cancellationToken);
+        var user = await userQueryService.FindByEmailAsync(email, cancellationToken);
         return user is not null;
     }
 }

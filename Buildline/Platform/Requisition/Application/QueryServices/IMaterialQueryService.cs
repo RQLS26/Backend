@@ -1,5 +1,4 @@
 using Buildline.Platform.Requisition.Domain.Model.Aggregates;
-using Buildline.Platform.Requisition.Domain.Model.Queries;
 
 namespace Buildline.Platform.Requisition.Application.QueryServices;
 
@@ -13,19 +12,18 @@ namespace Buildline.Platform.Requisition.Application.QueryServices;
 public interface IMaterialQueryService
 {
     /// <summary>
-    ///     Handles the query that retrieves every material.
+    ///     Lists every material currently registered.
     /// </summary>
-    /// <param name="query">Query object representing the material listing request.</param>
     /// <param name="cancellationToken">Token used to cancel repository access.</param>
     /// <returns>The materials available to requisition and inventory workflows.</returns>
-    Task<IEnumerable<Material>> Handle(GetAllMaterialsQuery query, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Material>> ListAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Handles the query that retrieves one material by identifier.
+    ///     Finds one material by its unique identifier.
     /// </summary>
-    /// <param name="query">Query object containing the requested material id.</param>
+    /// <param name="materialId">The identifier of the material to look up.</param>
     /// <param name="cancellationToken">Token used to cancel repository access.</param>
     /// <returns>The material when it exists; otherwise <c>null</c>.</returns>
-    Task<Material?> Handle(GetMaterialByIdQuery query, CancellationToken cancellationToken = default);
+    Task<Material?> FindByIdAsync(int materialId, CancellationToken cancellationToken = default);
 }
 

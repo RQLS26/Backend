@@ -1,6 +1,5 @@
 using Buildline.Platform.Requisition.Application.QueryServices;
 using Buildline.Platform.Requisition.Domain.Model.Aggregates;
-using Buildline.Platform.Requisition.Domain.Model.Queries;
 using Buildline.Platform.Requisition.Domain.Repositories;
 
 namespace Buildline.Platform.Requisition.Application.Internal.QueryServices;
@@ -17,24 +16,19 @@ public class MaterialQueryService(IMaterialRepository materialRepository) : IMat
     /// <summary>
     ///     Retrieves every material currently registered in material references.
     /// </summary>
-    /// <param name="query">Material listing query.</param>
     /// <param name="cancellationToken">Token used to cancel the repository call.</param>
     /// <returns>A collection of material aggregates, possibly empty.</returns>
-    public async Task<IEnumerable<Material>> Handle(GetAllMaterialsQuery query, CancellationToken cancellationToken = default)
-    {
-        return await materialRepository.ListAsync(cancellationToken);
-    }
+    public async Task<IEnumerable<Material>> ListAsync(CancellationToken cancellationToken = default)
+        => await materialRepository.ListAsync(cancellationToken);
 
     /// <summary>
     ///     Retrieves one material by identifier.
     /// </summary>
-    /// <param name="query">Material lookup query containing the requested id.</param>
+    /// <param name="materialId">Identifier of the material aggregate to look up.</param>
     /// <param name="cancellationToken">Token used to cancel the repository call.</param>
     /// <returns>The material aggregate when found; otherwise <c>null</c>.</returns>
-    public async Task<Material?> Handle(GetMaterialByIdQuery query, CancellationToken cancellationToken = default)
-    {
-        return await materialRepository.FindByIdAsync(query.MaterialId, cancellationToken);
-    }
+    public async Task<Material?> FindByIdAsync(int materialId, CancellationToken cancellationToken = default)
+        => await materialRepository.FindByIdAsync(materialId, cancellationToken);
 }
 
 

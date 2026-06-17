@@ -1,6 +1,5 @@
 using Buildline.Platform.Analytics.Application.QueryServices;
 using Buildline.Platform.Analytics.Domain.Model.Aggregates;
-using Buildline.Platform.Analytics.Domain.Model.Queries;
 using Buildline.Platform.Analytics.Domain.Repositories;
 
 namespace Buildline.Platform.Analytics.Application.Internal.QueryServices;
@@ -18,23 +17,18 @@ public class ProjectQueryService(IProjectRepository projectRepository) : IProjec
     /// <summary>
     ///     Retrieves every project available to the current backend version.
     /// </summary>
-    /// <param name="query">Project listing query.</param>
     /// <param name="cancellationToken">Token used to cancel the repository call.</param>
     /// <returns>A collection of project aggregates, possibly empty.</returns>
-    public async Task<IEnumerable<Project>> Handle(GetAllProjectsQuery query, CancellationToken cancellationToken = default)
-    {
-        return await projectRepository.ListAsync(cancellationToken);
-    }
+    public async Task<IEnumerable<Project>> ListAsync(CancellationToken cancellationToken = default)
+        => await projectRepository.ListAsync(cancellationToken);
 
     /// <summary>
     ///     Retrieves a single project by its identifier.
     /// </summary>
-    /// <param name="query">Project lookup query containing the requested id.</param>
+    /// <param name="projectId">Identifier of the project aggregate to look up.</param>
     /// <param name="cancellationToken">Token used to cancel the repository call.</param>
     /// <returns>The project aggregate when found; otherwise <c>null</c>.</returns>
-    public async Task<Project?> Handle(GetProjectByIdQuery query, CancellationToken cancellationToken = default)
-    {
-        return await projectRepository.FindByIdAsync(query.ProjectId, cancellationToken);
-    }
+    public async Task<Project?> FindByIdAsync(int projectId, CancellationToken cancellationToken = default)
+        => await projectRepository.FindByIdAsync(projectId, cancellationToken);
 }
 

@@ -1,14 +1,12 @@
 using System.Net.Mime;
 using Buildline.Platform.Profiles.Application.CommandServices;
 using Buildline.Platform.Profiles.Application.QueryServices;
-using Buildline.Platform.Profiles.Domain.Model.Queries;
 using Buildline.Platform.Profiles.Interfaces.Rest.Resources;
 using Buildline.Platform.Profiles.Interfaces.Rest.Transform;
-using Buildline.Platform.Resources.Errors;
 using Buildline.Platform.Shared.Interfaces.Rest.ProblemDetails;
+using Buildline.Platform.Shared.Interfaces.Rest.Transform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Buildline.Platform.Profiles.Interfaces.Rest;
@@ -18,7 +16,6 @@ namespace Buildline.Platform.Profiles.Interfaces.Rest;
 /// </summary>
 /// <param name="profileCommandService">Application command service used for profile updates.</param>
 /// <param name="profileQueryService">Application query service used for profile lookup and listing.</param>
-/// <param name="errorLocalizer">Localizer used to resolve profile error messages.</param>
 /// <param name="problemDetailsFactory">Factory used to produce standardized Problem Details responses.</param>
 /// <remarks>
 ///     The controller satisfies TS-01, TS-02 and TS-03 using versioned endpoints aligned with the
@@ -32,7 +29,6 @@ namespace Buildline.Platform.Profiles.Interfaces.Rest;
 public class ProfilesController(
     IProfileCommandService profileCommandService,
     IProfileQueryService profileQueryService,
-    IStringLocalizer<ErrorMessages> errorLocalizer,
     ProblemDetailsFactory problemDetailsFactory)
     : ControllerBase
 {
@@ -53,15 +49,10 @@ public class ProfilesController(
     [SwaggerResponse(StatusCodes.Status404NotFound, "The profile was not found.")]
     public async Task<IActionResult> GetProfileById(int profileId, CancellationToken cancellationToken)
     {
-        var getProfileByIdQuery = new GetProfileByIdQuery(profileId);
-        var profile = await profileQueryService.Handle(getProfileByIdQuery, cancellationToken);
-
-        return ProfilesActionResultAssembler.ToActionResultFromGetProfileByIdResult(
-            this,
-            profile,
-            errorLocalizer,
-            problemDetailsFactory,
-            foundProfile => Ok(ProfileResourceFromEntityAssembler.ToResourceFromEntity(foundProfile)));
+        var profile = await profileQueryService.FindByIdAsync(profileId, cancellationToken);
+        return profile is null
+            ? this.NotFoundProblem("Profile", profileId)
+            : Ok(ProfileResourceFromEntityAssembler.ToResourceFromEntity(profile));
     }
 
     /// <summary>
@@ -85,13 +76,9 @@ public class ProfilesController(
         [FromBody] UpdateProfileResource resource,
         CancellationToken cancellationToken)
     {
-        var updateProfileCommand = UpdateProfileCommandFromResourceAssembler.ToCommandFromResource(profileId, resource);
-        var result = await profileCommandService.Handle(updateProfileCommand, cancellationToken);
-
-        return ProfilesActionResultAssembler.ToActionResultFromUpdateProfileResult(
-            this,
-            result,
-            problemDetailsFactory,
+        var command = UpdateProfileCommandFromResourceAssembler.ToCommandFromResource(profileId, resource);
+        var result = await profileCommandService.Handle(command, cancellationToken);
+        return ApplicationResultActionResultAssembler.ToActionResult(this, result, problemDetailsFactory,
             updatedProfile => Ok(ProfileResourceFromEntityAssembler.ToResourceFromEntity(updatedProfile)));
     }
 
@@ -139,11 +126,7 @@ public class ProfilesController(
     [SwaggerResponse(StatusCodes.Status204NoContent, "No profiles are currently registered.")]
     public async Task<IActionResult> GetAllProfiles(CancellationToken cancellationToken)
     {
-        var getAllProfilesQuery = new GetAllProfilesQuery();
-        var profiles = await profileQueryService.Handle(getAllProfilesQuery, cancellationToken);
-
-        return ProfilesActionResultAssembler.ToActionResultFromGetAllProfilesResult(
-            profiles,
-            foundProfiles => Ok(foundProfiles.Select(ProfileResourceFromEntityAssembler.ToResourceFromEntity)));
+        var profiles = await profileQueryService.ListAsync(cancellationToken);
+        return Ok(profiles.Select(ProfileResourceFromEntityAssembler.ToResourceFromEntity));
     }
 }

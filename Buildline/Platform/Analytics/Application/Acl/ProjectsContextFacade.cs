@@ -1,5 +1,4 @@
 using Buildline.Platform.Analytics.Application.QueryServices;
-using Buildline.Platform.Analytics.Domain.Model.Queries;
 using Buildline.Platform.Analytics.Interfaces.Acl;
 
 namespace Buildline.Platform.Analytics.Application.Acl;
@@ -17,7 +16,7 @@ public class ProjectsContextFacade(IProjectQueryService projectQueryService) : I
     /// <inheritdoc />
     public async Task<int> FetchProjectIdByName(string projectName, CancellationToken cancellationToken = default)
     {
-        var projects = await projectQueryService.Handle(new GetAllProjectsQuery(), cancellationToken);
+        var projects = await projectQueryService.ListAsync(cancellationToken);
         var project = projects.FirstOrDefault(candidate =>
             string.Equals(candidate.Name, projectName, StringComparison.OrdinalIgnoreCase));
         return project?.Id ?? 0;
@@ -26,14 +25,14 @@ public class ProjectsContextFacade(IProjectQueryService projectQueryService) : I
     /// <inheritdoc />
     public async Task<string> FetchProjectNameById(int projectId, CancellationToken cancellationToken = default)
     {
-        var project = await projectQueryService.Handle(new GetProjectByIdQuery(projectId), cancellationToken);
+        var project = await projectQueryService.FindByIdAsync(projectId, cancellationToken);
         return project?.Name ?? string.Empty;
     }
 
     /// <inheritdoc />
     public async Task<string> FetchProjectStatusById(int projectId, CancellationToken cancellationToken = default)
     {
-        var project = await projectQueryService.Handle(new GetProjectByIdQuery(projectId), cancellationToken);
+        var project = await projectQueryService.FindByIdAsync(projectId, cancellationToken);
         return project?.Status ?? string.Empty;
     }
 }

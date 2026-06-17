@@ -1,8 +1,10 @@
 using System.Net.Mime;
 using Buildline.Platform.Iam.Application.CommandServices;
+using Buildline.Platform.Iam.Domain.Model.Aggregates;
 using Buildline.Platform.Iam.Interfaces.Rest.Resources;
 using Buildline.Platform.Iam.Interfaces.Rest.Transform;
 using Buildline.Platform.Shared.Interfaces.Rest.ProblemDetails;
+using Buildline.Platform.Shared.Interfaces.Rest.Transform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -49,13 +51,13 @@ public class AuthenticationController(
         var command = SignInCommandFromResourceAssembler.ToCommandFromResource(resource);
         var result = await userCommandService.Handle(command, cancellationToken);
 
-        return IamActionResultAssembler.ToActionResultFromSignInResult(
+        return ApplicationResultActionResultAssembler.ToActionResult(
             this,
             result,
             problemDetailsFactory,
-            authenticatedUser => Ok(AuthenticatedUserResourceFromEntityAssembler.ToResourceFromEntity(
-                authenticatedUser.user,
-                authenticatedUser.token)));
+            (ValueTuple<User, string> authenticatedUser) => Ok(AuthenticatedUserResourceFromEntityAssembler.ToResourceFromEntity(
+                authenticatedUser.Item1,
+                authenticatedUser.Item2)));
     }
 
     /// <summary>
@@ -79,14 +81,14 @@ public class AuthenticationController(
         var command = SignUpCommandFromResourceAssembler.ToCommandFromResource(resource);
         var result = await userCommandService.Handle(command, cancellationToken);
 
-        return IamActionResultAssembler.ToActionResultFromSignUpResult(
+        return ApplicationResultActionResultAssembler.ToActionResult(
             this,
             result,
             problemDetailsFactory,
-            authenticatedUser => Created(
-                $"/api/v1/users/{authenticatedUser.user.Id}",
+            (ValueTuple<User, string> authenticatedUser) => Created(
+                $"/api/v1/users/{authenticatedUser.Item1.Id}",
                 AuthenticatedUserResourceFromEntityAssembler.ToResourceFromEntity(
-                    authenticatedUser.user,
-                    authenticatedUser.token)));
+                    authenticatedUser.Item1,
+                    authenticatedUser.Item2)));
     }
 }

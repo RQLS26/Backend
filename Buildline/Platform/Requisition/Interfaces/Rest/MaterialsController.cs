@@ -2,14 +2,12 @@ using System.Net.Mime;
 using Buildline.Platform.Requisition.Application.CommandServices;
 using Buildline.Platform.Requisition.Application.QueryServices;
 using Buildline.Platform.Requisition.Domain.Model.Commands;
-using Buildline.Platform.Requisition.Domain.Model.Queries;
 using Buildline.Platform.Requisition.Interfaces.Rest.Resources;
 using Buildline.Platform.Requisition.Interfaces.Rest.Transform;
-using Buildline.Platform.Resources.Errors;
 using Buildline.Platform.Shared.Interfaces.Rest.ProblemDetails;
+using Buildline.Platform.Shared.Interfaces.Rest.Transform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Buildline.Platform.Requisition.Interfaces.Rest;
@@ -29,7 +27,6 @@ namespace Buildline.Platform.Requisition.Interfaces.Rest;
 public class MaterialsController(
     IMaterialCommandService materialCommandService,
     IMaterialQueryService materialQueryService,
-    IStringLocalizer<ErrorMessages> errorLocalizer,
     ProblemDetailsFactory problemDetailsFactory)
     : ControllerBase
 {
@@ -49,12 +46,8 @@ public class MaterialsController(
     [SwaggerResponse(StatusCodes.Status204NoContent, "No materials are currently registered.")]
     public async Task<IActionResult> GetAllMaterials(CancellationToken cancellationToken)
     {
-        var query = new GetAllMaterialsQuery();
-        var materials = await materialQueryService.Handle(query, cancellationToken);
-
-        return MaterialsActionResultAssembler.ToActionResultFromGetAllMaterialsResult(
-            materials,
-            foundMaterials => Ok(foundMaterials.Select(MaterialResourceFromEntityAssembler.ToResourceFromEntity)));
+        var materials = await materialQueryService.ListAsync(cancellationToken);
+        return Ok(materials.Select(MaterialResourceFromEntityAssembler.ToResourceFromEntity));
     }
 
     /// <summary>
@@ -74,15 +67,10 @@ public class MaterialsController(
     [SwaggerResponse(StatusCodes.Status404NotFound, "The material was not found.")]
     public async Task<IActionResult> GetMaterialById(int materialId, CancellationToken cancellationToken)
     {
-        var query = new GetMaterialByIdQuery(materialId);
-        var material = await materialQueryService.Handle(query, cancellationToken);
-
-        return MaterialsActionResultAssembler.ToActionResultFromGetMaterialByIdResult(
-            this,
-            material,
-            errorLocalizer,
-            problemDetailsFactory,
-            foundMaterial => Ok(MaterialResourceFromEntityAssembler.ToResourceFromEntity(foundMaterial)));
+        var material = await materialQueryService.FindByIdAsync(materialId, cancellationToken);
+        return material is null
+            ? this.NotFoundProblem("Material", materialId)
+            : Ok(MaterialResourceFromEntityAssembler.ToResourceFromEntity(material));
     }
 
     /// <summary>
@@ -106,11 +94,7 @@ public class MaterialsController(
     {
         var command = CreateMaterialCommandFromResourceAssembler.ToCommandFromResource(resource);
         var result = await materialCommandService.Handle(command, cancellationToken);
-
-        return MaterialsActionResultAssembler.ToActionResultFromCreateMaterialResult(
-            this,
-            result,
-            problemDetailsFactory,
+        return ApplicationResultActionResultAssembler.ToActionResult(this, result, problemDetailsFactory,
             createdMaterial => CreatedAtAction(
                 nameof(GetMaterialById),
                 new { materialId = createdMaterial.Id },
@@ -140,11 +124,7 @@ public class MaterialsController(
     {
         var command = UpdateMaterialCommandFromResourceAssembler.ToCommandFromResource(materialId, resource);
         var result = await materialCommandService.Handle(command, cancellationToken);
-
-        return MaterialsActionResultAssembler.ToActionResultFromUpdateMaterialResult(
-            this,
-            result,
-            problemDetailsFactory,
+        return ApplicationResultActionResultAssembler.ToActionResult(this, result, problemDetailsFactory,
             updatedMaterial => Ok(MaterialResourceFromEntityAssembler.ToResourceFromEntity(updatedMaterial)));
     }
 
@@ -195,12 +175,7 @@ public class MaterialsController(
     {
         var command = new DeleteMaterialCommand(materialId);
         var result = await materialCommandService.Handle(command, cancellationToken);
-
-        return MaterialsActionResultAssembler.ToActionResultFromDeleteMaterialResult(
-            this,
-            result,
-            problemDetailsFactory,
-            NoContent);
+        return ApplicationResultActionResultAssembler.ToActionResult(this, result, problemDetailsFactory, NoContent);
     }
 }
 

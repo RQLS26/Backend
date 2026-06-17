@@ -1,6 +1,5 @@
 using Buildline.Platform.Iam.Application.Internal.OutboundServices;
 using Buildline.Platform.Iam.Application.QueryServices;
-using Buildline.Platform.Iam.Domain.Model.Queries;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Buildline.Platform.Iam.Infrastructure.Pipeline.Middleware.Components;
@@ -55,7 +54,7 @@ public class RequestAuthorizationMiddleware(RequestDelegate next)
             return;
         }
 
-        var user = await userQueryService.Handle(new GetUserByIdQuery(userId.Value), cancellationToken);
+        var user = await userQueryService.FindByIdAsync(userId.Value, cancellationToken);
         if (user is null)
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;

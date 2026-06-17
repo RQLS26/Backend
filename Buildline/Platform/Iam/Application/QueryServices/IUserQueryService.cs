@@ -1,5 +1,4 @@
 using Buildline.Platform.Iam.Domain.Model.Aggregates;
-using Buildline.Platform.Iam.Domain.Model.Queries;
 
 namespace Buildline.Platform.Iam.Application.QueryServices;
 
@@ -13,26 +12,25 @@ namespace Buildline.Platform.Iam.Application.QueryServices;
 public interface IUserQueryService
 {
     /// <summary>
-    ///     Handles the query that retrieves every registered user.
+    ///     Lists every registered user.
     /// </summary>
-    /// <param name="query">Query object representing the users listing request.</param>
     /// <param name="cancellationToken">Token used to cancel repository access.</param>
     /// <returns>The registered IAM users.</returns>
-    Task<IEnumerable<User>> Handle(GetAllUsersQuery query, CancellationToken cancellationToken = default);
+    Task<IEnumerable<User>> ListAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Handles the query that retrieves one user by identifier.
+    ///     Finds one user by identifier.
     /// </summary>
-    /// <param name="query">Query object containing the requested user id.</param>
+    /// <param name="userId">The identifier of the user to look up.</param>
     /// <param name="cancellationToken">Token used to cancel repository access.</param>
     /// <returns>The user when it exists; otherwise <c>null</c>.</returns>
-    Task<User?> Handle(GetUserByIdQuery query, CancellationToken cancellationToken = default);
+    Task<User?> FindByIdAsync(int userId, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Handles the query that retrieves one user by email.
+    ///     Finds one user by email address.
     /// </summary>
-    /// <param name="query">Query object containing the requested email.</param>
+    /// <param name="email">The email address to look up.</param>
     /// <param name="cancellationToken">Token used to cancel repository access.</param>
     /// <returns>The user when the email exists; otherwise <c>null</c>.</returns>
-    Task<User?> Handle(GetUserByEmailQuery query, CancellationToken cancellationToken = default);
+    Task<User?> FindByEmailAsync(string email, CancellationToken cancellationToken = default);
 }

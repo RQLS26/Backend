@@ -1,6 +1,5 @@
 using Buildline.Platform.Iam.Application.QueryServices;
 using Buildline.Platform.Iam.Domain.Model.Aggregates;
-using Buildline.Platform.Iam.Domain.Model.Queries;
 using Buildline.Platform.Iam.Domain.Repositories;
 
 namespace Buildline.Platform.Iam.Application.Internal.QueryServices;
@@ -18,33 +17,26 @@ public class UserQueryService(IUserRepository userRepository) : IUserQueryServic
     /// <summary>
     ///     Retrieves every registered user.
     /// </summary>
-    /// <param name="query">Users listing query.</param>
     /// <param name="cancellationToken">Token used to cancel the repository call.</param>
     /// <returns>A collection of user aggregates, possibly empty.</returns>
-    public async Task<IEnumerable<User>> Handle(GetAllUsersQuery query, CancellationToken cancellationToken = default)
-    {
-        return await userRepository.ListAsync(cancellationToken);
-    }
+    public async Task<IEnumerable<User>> ListAsync(CancellationToken cancellationToken = default)
+        => await userRepository.ListAsync(cancellationToken);
 
     /// <summary>
     ///     Retrieves one user by identifier.
     /// </summary>
-    /// <param name="query">User lookup query containing the requested id.</param>
+    /// <param name="userId">Identifier of the user aggregate to look up.</param>
     /// <param name="cancellationToken">Token used to cancel the repository call.</param>
     /// <returns>The user aggregate when found; otherwise <c>null</c>.</returns>
-    public async Task<User?> Handle(GetUserByIdQuery query, CancellationToken cancellationToken = default)
-    {
-        return await userRepository.FindByIdAsync(query.UserId, cancellationToken);
-    }
+    public async Task<User?> FindByIdAsync(int userId, CancellationToken cancellationToken = default)
+        => await userRepository.FindByIdAsync(userId, cancellationToken);
 
     /// <summary>
     ///     Retrieves one user by email.
     /// </summary>
-    /// <param name="query">User lookup query containing the requested email.</param>
+    /// <param name="email">Email address of the user aggregate to look up.</param>
     /// <param name="cancellationToken">Token used to cancel the repository call.</param>
     /// <returns>The user aggregate when found; otherwise <c>null</c>.</returns>
-    public async Task<User?> Handle(GetUserByEmailQuery query, CancellationToken cancellationToken = default)
-    {
-        return await userRepository.FindByEmailAsync(query.Email, cancellationToken);
-    }
+    public async Task<User?> FindByEmailAsync(string email, CancellationToken cancellationToken = default)
+        => await userRepository.FindByEmailAsync(email, cancellationToken);
 }

@@ -1,6 +1,5 @@
 using Buildline.Platform.Inventory.Application.QueryServices;
 using Buildline.Platform.Inventory.Domain.Model.Aggregates;
-using Buildline.Platform.Inventory.Domain.Model.Queries;
 using Buildline.Platform.Inventory.Domain.Repositories;
 
 namespace Buildline.Platform.Inventory.Application.Internal.QueryServices;
@@ -18,24 +17,19 @@ public class CategoryQueryService(ICategoryRepository categoryRepository) : ICat
     /// <summary>
     ///     Retrieves every material category available in material references.
     /// </summary>
-    /// <param name="query">Category listing query.</param>
     /// <param name="cancellationToken">Token used to cancel the repository call.</param>
     /// <returns>A collection of category aggregates, possibly empty.</returns>
-    public async Task<IEnumerable<Category>> Handle(GetAllCategoriesQuery query, CancellationToken cancellationToken = default)
-    {
-        return await categoryRepository.ListAsync(cancellationToken);
-    }
+    public async Task<IEnumerable<Category>> ListAsync(CancellationToken cancellationToken = default)
+        => await categoryRepository.ListAsync(cancellationToken);
 
     /// <summary>
     ///     Retrieves a single material category by identifier.
     /// </summary>
-    /// <param name="query">Category lookup query containing the requested id.</param>
+    /// <param name="categoryId">Identifier of the category aggregate to look up.</param>
     /// <param name="cancellationToken">Token used to cancel the repository call.</param>
     /// <returns>The category aggregate when found; otherwise <c>null</c>.</returns>
-    public async Task<Category?> Handle(GetCategoryByIdQuery query, CancellationToken cancellationToken = default)
-    {
-        return await categoryRepository.FindByIdAsync(query.CategoryId, cancellationToken);
-    }
+    public async Task<Category?> FindByIdAsync(int categoryId, CancellationToken cancellationToken = default)
+        => await categoryRepository.FindByIdAsync(categoryId, cancellationToken);
 }
 
 

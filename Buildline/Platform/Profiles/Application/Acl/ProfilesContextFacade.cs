@@ -1,5 +1,4 @@
 using Buildline.Platform.Profiles.Application.QueryServices;
-using Buildline.Platform.Profiles.Domain.Model.Queries;
 using Buildline.Platform.Profiles.Interfaces.Acl;
 
 namespace Buildline.Platform.Profiles.Application.Acl;
@@ -17,7 +16,7 @@ public class ProfilesContextFacade(IProfileQueryService profileQueryService) : I
     /// <inheritdoc />
     public async Task<int> FetchProfileIdByEmail(string email, CancellationToken cancellationToken = default)
     {
-        var profiles = await profileQueryService.Handle(new GetAllProfilesQuery(), cancellationToken);
+        var profiles = await profileQueryService.ListAsync(cancellationToken);
         var profile = profiles.FirstOrDefault(candidate =>
             string.Equals(candidate.Email, email, StringComparison.OrdinalIgnoreCase));
         return profile?.Id ?? 0;
@@ -26,7 +25,7 @@ public class ProfilesContextFacade(IProfileQueryService profileQueryService) : I
     /// <inheritdoc />
     public async Task<string> FetchCompanyNameByProfileId(int profileId, CancellationToken cancellationToken = default)
     {
-        var profile = await profileQueryService.Handle(new GetProfileByIdQuery(profileId), cancellationToken);
+        var profile = await profileQueryService.FindByIdAsync(profileId, cancellationToken);
         return profile?.CompanyName ?? string.Empty;
     }
 }
