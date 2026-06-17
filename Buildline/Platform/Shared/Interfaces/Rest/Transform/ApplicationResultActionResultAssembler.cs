@@ -58,19 +58,26 @@ public static class ApplicationResultActionResultAssembler
     }
 
     /// <summary>
-    ///     Maps conventional bounded-context error names to REST status codes.
+    ///     Maps bounded-context error names to REST status codes using a suffix convention.
+    ///     Each application error enum value SHOULD end with one of the recognised suffixes so that
+    ///     the controller layer can produce appropriate HTTP Problem Details without per-context wiring.
     /// </summary>
     /// <param name="error">Error enum emitted by the application layer.</param>
     /// <returns>The HTTP status code that best represents the failure.</returns>
     private static int ToStatusCodeFromError(Enum? error)
     {
-        var name = error?.ToString() ?? string.Empty;
-        if (name.Contains("NotFound", StringComparison.OrdinalIgnoreCase)) return StatusCodes.Status404NotFound;
-        if (name.Contains("Invalid", StringComparison.OrdinalIgnoreCase)) return StatusCodes.Status400BadRequest;
-        if (name.Contains("Already", StringComparison.OrdinalIgnoreCase)) return StatusCodes.Status409Conflict;
-        if (name.Contains("Cancelled", StringComparison.OrdinalIgnoreCase)) return StatusCodes.Status409Conflict;
-        if (name.Contains("Database", StringComparison.OrdinalIgnoreCase)) return StatusCodes.Status500InternalServerError;
-        if (name.Contains("Internal", StringComparison.OrdinalIgnoreCase)) return StatusCodes.Status500InternalServerError;
-        return StatusCodes.Status400BadRequest;
+        return error?.ToString() switch
+        {
+            { } name when name.EndsWith("NotFound", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status404NotFound,
+            { } name when name.EndsWith("Invalid", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status400BadRequest,
+            { } name when name.EndsWith("AlreadyTaken", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status409Conflict,
+            { } name when name.EndsWith("AlreadyExists", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status409Conflict,
+            { } name when name.EndsWith("Cancelled", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status409Conflict,
+            { } name when name.EndsWith("DatabaseError", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status500InternalServerError,
+            { } name when name.EndsWith("InternalServerError", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status500InternalServerError,
+            { } name when name.EndsWith("Unauthorized", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status401Unauthorized,
+            { } name when name.EndsWith("Forbidden", StringComparison.OrdinalIgnoreCase) => StatusCodes.Status403Forbidden,
+            _ => StatusCodes.Status400BadRequest
+        };
     }
 }
