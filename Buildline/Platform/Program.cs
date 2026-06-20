@@ -369,6 +369,31 @@ file static class DatabaseBootstrapper
             logger.LogInformation("Added missing compatibility column users.membership_status.");
         }
 
+        var companyScopedOperationalTables = new[]
+        {
+            "projects",
+            "budgets",
+            "materials",
+            "requisitions",
+            "purchase_orders",
+            "quotations",
+            "inventory_items",
+            "deliveries",
+            "suppliers",
+            "supplier_incidents",
+            "messages"
+        };
+
+        foreach (var tableName in companyScopedOperationalTables)
+        {
+            if (await TableExistsAsync(dbContext, tableName) &&
+                !await ColumnExistsAsync(dbContext, tableName, "company_id"))
+            {
+                await ExecuteNonQueryAsync(dbContext, $"ALTER TABLE `{tableName}` ADD COLUMN `company_id` int NOT NULL DEFAULT 1");
+                logger.LogInformation("Added missing compatibility column {TableName}.company_id.", tableName);
+            }
+        }
+
         await EnsureDefaultCompanyMembershipAsync(dbContext, logger);
 
         await EnsureSingleOwnerAsync(dbContext, logger);
@@ -479,6 +504,32 @@ file static class DatabaseBootstrapper
             columnParameter.ParameterName = "@columnName";
             columnParameter.Value = columnName;
             command.Parameters.Add(columnParameter);
+        });
+
+        return Convert.ToInt32(result) > 0;
+    }
+
+    /// <summary>
+    ///     Checks whether a table exists in the active MySQL database.
+    /// </summary>
+    /// <param name="dbContext">Application database context used to obtain the active connection.</param>
+    /// <param name="tableName">Database table name to inspect.</param>
+    /// <returns><c>true</c> when the table exists; otherwise <c>false</c>.</returns>
+    private static async Task<bool> TableExistsAsync(AppDbContext dbContext, string tableName)
+    {
+        const string query = """
+            SELECT COUNT(*)
+            FROM information_schema.tables
+            WHERE table_schema = DATABASE()
+              AND table_name = @tableName
+            """;
+
+        var result = await ExecuteScalarAsync(dbContext, query, command =>
+        {
+            var tableParameter = command.CreateParameter();
+            tableParameter.ParameterName = "@tableName";
+            tableParameter.Value = tableName;
+            command.Parameters.Add(tableParameter);
         });
 
         return Convert.ToInt32(result) > 0;
